@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music-Player</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/847c213346.js" crossorigin="anonymous"></script>
+</head>
+<body>
+   <div class="container">
+        <div class="music-player">
+            <nav>
+                <div class="circle">
+                    <i class="fa-solid fa-angle-left"></i>
+                </div>
+                <div class="circle">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </nav>
+            <img id="image" src="" class="song">
+
+            <h1 id="title">Song Title</h1>
+            <p id="artist">Artist Name</p>
+            <audio controls id="song">
+                <source id="audiosrc" src="" type="audio/mpeg">
+            </audio>
+            <input type="range" value="0" id="progress">
+
+            <div class="controls">
+                <div>
+                    <div onclick="playprev()"><i class="fa-solid fa-backward"></i> </div>
+                    <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrl"></i></div>
+                    <div onclick="playnext()"><i class="fa-solid fa-forward"></i></div>
+                </div>
+            </div>
+        </div>
+   </div> 
+
+   <script>
+
+    const songs=[
+    { title: "Song 0", artist: "Artist 0", file: "song0.mp3" },
+    { title: "Song 1", artist: "Artist 1", file: "song1.mp3" },
+    { title: "Song 2", artist: "Artist 2", file: "song2.mp3" },
+    { title: "Song 3", artist: "Artist 3", file: "song3.mp3" },
+    { title: "Song 4", artist: "Artist 4", file: "song4.mp3" },
+    { title: "Song 5", artist: "Artist 5", file: "song5.mp3" }
+    ]
+
+    let current_Song=0;
+    let progress=document.getElementById("progress");
+    let song=document.getElementById("song");
+    let ctrlicon=document.getElementById("ctrl");
+
+    let title=document.getElementById("title");
+    let artist=document.getElementById("artist");
+    let audiosrc=document.getElementById("audiosrc");
+    let image=document.getElementById("image");
+
+    song.onloadedmetadata=function(){
+        progress.max=song.duration;
+        progress.value=song.currentTime;
+    }
+
+    function loadsong(){
+        let currentSong=songs[current_Song];
+        audiosrc.src=currentSong.file;
+        image.src=currentSong.image;
+        song.load();
+        title.textContent=currentSong.title;
+        artist.textContent=currentSong.artist;
+    }
+    function playPause(){
+        // if(ctrl.classList.contains("fa-pause")){
+        //     song.pause();
+        //     ctrl.classList.remove("fa-pause");
+        //     ctrl.classList.add("fa-play");
+
+        // }
+        // else{
+        //     song.play();
+        //     ctrl.classList.add("fa-pause");
+        //     ctrl.classList.remove("fa-play");
+        // }
+        if(song.paused){
+            song.play();
+            ctrl.classList.remove("fa-play");
+            ctrl.classList.add("fa-pause");
+        }
+        else{
+            song.pause();
+            ctrl.classList.remove("fa-pause");
+            ctrl.classList.add("fa-play");
+        }
+    }
+
+    function playnext(){
+        current_Song++;
+        if(current_Song>=songs.length){
+            current_Song=0;
+        }
+        loadsong();
+        playPause();
+    }
+    function playprev(){
+        current_Song--;
+        if(current_Song>=songs.length){
+            current_Song=songs.length-1;
+        }
+        loadsong();
+        playPause();
+    }
+
+    if(song.play()){
+        setInterval(()=>{
+            progress.value=song.currentTime;
+        },500)
+    }
+    progress.onchange=function(){
+        song.play();
+        song.currentTime=progress.value;
+        ctrl.classList.add("fa-pause");
+        ctrl.classList.remove("fa-play");
+    }
+    song.addEventListener('ended' ,function(){
+        playnext();
+    })
+    loadsong();
+   </script>
+</body>
+</html>
